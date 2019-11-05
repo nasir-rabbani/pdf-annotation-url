@@ -1,31 +1,32 @@
 <template>
   <div id="app">
-    <WebViewer :path="`${publicPath}lib`" url="https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf"/>
+    <div id="nav">
+      <router-link to="/">Home</router-link>|
+      <router-link to="/editor">Editor</router-link>
+    </div>
+    <router-view />
   </div>
 </template>
 
-<script>
-import WebViewer from './components/WebViewer.vue'
-
-export default {
-  name: 'app',
-  components: {
-    WebViewer
-  },
-  data () {
-    return {
-      publicPath: process.env.BASE_URL
-    }
-  }
-}
-</script>
-
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
