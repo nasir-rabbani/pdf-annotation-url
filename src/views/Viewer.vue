@@ -4,7 +4,12 @@
       <p>This is Viewer</p>
     </div>
     <div id="app">
-      <WebViewer :path="`${publicPath}lib`" :url="fileUrl" :isViewer="this.isViewer" />
+      <WebViewer
+        :path="`${publicPath}lib`"
+        :url="fileUrlData.file"
+        :fileUrlData="fileUrlData"
+        :isViewer="isViewer"
+      />
     </div>
   </div>
 </template>
@@ -13,11 +18,11 @@
 import WebViewer from "@/components/WebViewer.vue";
 export default {
   name: "app",
-  props: {
-    fileUrl: String
-  },
   components: {
     WebViewer
+  },
+  props: {
+    fileUrlData: {}
   },
   data() {
     return {

@@ -14,5 +14,16 @@ export const mutations = {
 export const actions = {
   createUrl({ commit }, urlData) {
     commit("SAVE_URL", urlData);
+  },
+
+  fetchURLData({ getters }, id) {
+    var urlData = getters.urlByID(id);
+    return urlData;
+  }
+};
+
+export const getters = {
+  urlByID: state => id => {
+    return state.urls[id];
   }
 };

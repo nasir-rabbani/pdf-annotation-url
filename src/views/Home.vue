@@ -5,10 +5,8 @@
     <div class="container">
       <div v-if="(home.urls).length">
         <div v-for="(urlData, index) in home.urls" :key="index">
-          <router-link
-            :to="{name: 'viewer', params: { pageIndex: urlData.pageIndex }, query: { URLData: urlData}}"
-          >
-            <div class="url-card">Page {{ urlData.pageIndex }}</div>
+          <router-link :to="{name: 'viewer', params: { id: index }}">
+            <div class="url-card">Reference id: {{ index }} @ Page: {{ urlData.pageIndex }}</div>
           </router-link>
         </div>
       </div>

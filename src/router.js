@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
+import store from "@/store/store";
 
 Vue.use(Router);
 function loadView(view) {
@@ -21,14 +22,25 @@ export default new Router({
       meta: { title: "Editor" }
     },
     {
-      path: "/viewer/:pageIndex",
+      path: "/viewer/:id",
       name: "viewer",
       component: loadView("Viewer"),
-      props(route) {
-        return { fileUrl: route.query.URLData.file };
-      },
-      // props: false,
-      meta: { title: "PDF Viewer" }
+      // props(route) {
+      //   return { fileUrl: route.query.URLData.file };
+      // },
+      props: true,
+      meta: { title: "PDF Viewer" },
+      beforeEnter(routeTo, routeFrom, next) {
+        store
+          .dispatch("home/fetchURLData", routeTo.params.id)
+          .then(fileUrlData => {
+            routeTo.params.fileUrlData = fileUrlData;
+            next();
+          })
+          .catch(error => {
+            alert("Something went wrong!!!", error);
+          });
+      }
     }
   ]
 });

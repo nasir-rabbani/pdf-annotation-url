@@ -8,14 +8,14 @@
 </template> 
 
 <script>
-/* eslint-disable */
 import store from "@/store/store";
 export default {
   name: "WebViewer",
   props: {
     path: String,
     url: String,
-    isViewer: false
+    isViewer: Boolean,
+    fileUrlData: {}
   },
   data() {
     return {
@@ -34,21 +34,13 @@ export default {
   },
   methods: {
     createUrl() {
-      console.log("create url called : ");
-
       this.URLData.file = this.url;
       // this.URLData.pageIndex = this.currentPage;
-      store.dispatch("home/createUrl", this.URLData).then(
-        response => {
-          console.log("Success!!");
-        },
-        error => {
-          console.error("Error!!!");
-        }
-      );
+      store.dispatch("home/createUrl", this.URLData);
     }
   },
   mounted: function() {
+    // eslint-disable-next-line no-undef
     WebViewer(
       {
         path: this.path,
@@ -63,38 +55,35 @@ export default {
       let self = this;
 
       docViewer.on("documentLoaded", function() {
+        // instance of annotation manager
+        var annotManager = docViewer.getAnnotationManager();
+
         if (self.isViewer) {
           // opening the web-viewer as viewer
-          // copying the annoted data
-          self.URLData = self.$route.query.URLData;
-
-          // jumping to the marked page
-          // docViewer.setCurrentPage(self.URLData.pageIndex);
-          // docViewer.zoomTo(2, self.URLData.x * 2, self.URLData.y * 2);
+          // jumping to the marked area
           var zoomLevel = 1;
-          var xOffset = self.URLData.x * zoomLevel;
+          var pageWidth = 795;
+          // x and y offsets are continous increasing and considers document as one long page
+          var xOffset = self.fileUrlData.x * zoomLevel;
           var yOffset =
-            (self.URLData.y + 795 * (self.URLData.pageIndex - 1)) * zoomLevel;
+            (self.fileUrlData.y +
+              pageWidth * (self.fileUrlData.pageIndex - 1)) *
+            zoomLevel;
           docViewer.zoomTo(zoomLevel, xOffset, yOffset);
-
-          // instance of annotation manager
-          var annotManager = docViewer.getAnnotationManager();
 
           var rectangle = new Annotations.RectangleAnnotation();
           // annotating data for the page
-          rectangle.PageNumber = parseInt(self.URLData.pageIndex);
-          rectangle.X = self.URLData.x;
-          rectangle.Y = self.URLData.y;
-          rectangle.Width = self.URLData.width;
-          rectangle.Height = self.URLData.height;
+          rectangle.PageNumber = parseInt(self.fileUrlData.pageIndex);
+          rectangle.X = self.fileUrlData.x;
+          rectangle.Y = self.fileUrlData.y;
+          rectangle.Width = self.fileUrlData.width;
+          rectangle.Height = self.fileUrlData.height;
           rectangle.Author = annotManager.getCurrentUser();
           annotManager.addAnnotation(rectangle);
         } else {
           // opening the web-viewer as editor
-          var annotManager = docViewer.getAnnotationManager();
 
           annotManager.on("annotationChanged", function(e, annots) {
-            console.log("annotationChanged : ", annots);
             (self.URLData.pageIndex = annots[0].getPageNumber()),
               (self.URLData.x = annots[0].X),
               (self.URLData.y = annots[0].Y),
