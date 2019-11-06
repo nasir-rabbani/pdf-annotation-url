@@ -70,14 +70,22 @@ export default {
               pageWidth * (self.fileUrlData.pageIndex - 1)) *
             zoomLevel;
           docViewer.zoomTo(zoomLevel, xOffset, yOffset);
-
+          // the color to fill in the marked area
+          var fillColor = { R: 255, G: 255, B: 0, A: 0.2 };
           var rectangle = new Annotations.RectangleAnnotation();
+          var color = new Annotations.Color(
+            fillColor.R,
+            fillColor.G,
+            fillColor.B,
+            fillColor.A
+          );
           // annotating data for the page
           rectangle.PageNumber = parseInt(self.fileUrlData.pageIndex);
           rectangle.X = self.fileUrlData.x;
           rectangle.Y = self.fileUrlData.y;
           rectangle.Width = self.fileUrlData.width;
           rectangle.Height = self.fileUrlData.height;
+          rectangle.FillColor = color;
           rectangle.Author = annotManager.getCurrentUser();
           annotManager.addAnnotation(rectangle);
         } else {
