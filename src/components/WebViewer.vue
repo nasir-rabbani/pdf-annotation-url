@@ -37,7 +37,7 @@ export default {
       console.log("create url called : ");
 
       this.URLData.file = this.url;
-      this.URLData.pageIndex = this.currentPage;
+      // this.URLData.pageIndex = this.currentPage;
       store.dispatch("home/createUrl", this.URLData).then(
         response => {
           console.log("Success!!");
@@ -59,7 +59,7 @@ export default {
     ).then(instance => {
       var docViewer = instance.docViewer;
       var Annotations = instance.Annotations;
-      var document = instance.document;
+
       let self = this;
 
       docViewer.on("documentLoaded", function() {
@@ -69,61 +69,37 @@ export default {
           self.URLData = self.$route.query.URLData;
 
           // jumping to the marked page
-          docViewer.setCurrentPage(self.URLData.pageIndex);
+          // docViewer.setCurrentPage(self.URLData.pageIndex);
+          // docViewer.zoomTo(2, self.URLData.x * 2, self.URLData.y * 2);
+          var zoomLevel = 1;
+          var xOffset = self.URLData.x * zoomLevel;
+          var yOffset =
+            (self.URLData.y + 795 * (self.URLData.pageIndex - 1)) * zoomLevel;
+          docViewer.zoomTo(zoomLevel, xOffset, yOffset);
+
           // instance of annotation manager
           var annotManager = docViewer.getAnnotationManager();
+
           var rectangle = new Annotations.RectangleAnnotation();
           // annotating data for the page
           rectangle.PageNumber = parseInt(self.URLData.pageIndex);
           rectangle.X = self.URLData.x;
-          rectangle.Y = self.URLData.y + 800;
+          rectangle.Y = self.URLData.y;
           rectangle.Width = self.URLData.width;
           rectangle.Height = self.URLData.height;
           rectangle.Author = annotManager.getCurrentUser();
           annotManager.addAnnotation(rectangle);
         } else {
           // opening the web-viewer as editor
+          var annotManager = docViewer.getAnnotationManager();
 
-          var getMouseLocation = function(e) {
-            var scrollElement = docViewer.getScrollViewElement();
-            var scrollLeft = scrollElement.scrollLeft || 0;
-            var scrollTop = scrollElement.scrollTop || 0;
-
-            return {
-              x: e.pageX + scrollLeft,
-              y: e.pageY + scrollTop
-            };
-          };
-          var displayMode = docViewer.getDisplayModeManager().getDisplayMode();
-
-          // to fetch top left coordinates
-          docViewer.on("mouseLeftDown", function(jqueryE, e) {
-            // get mouse pointer coordinates
-            self.firstWindowCoords = getMouseLocation(e);
-            self.currentPage =
-              displayMode.getSelectedPages(
-                self.firstWindowCoords,
-                self.firstWindowCoords
-              ).first + 1;
-            var pageCoordinates = displayMode.windowToPage(
-              self.firstWindowCoords,
-              self.currentPage
-            );
-
-            self.URLData.x = pageCoordinates.x;
-            self.URLData.y = pageCoordinates.y;
-          });
-
-          // to fetch bottom right coordinates
-          docViewer.on("mouseLeftUp", function(jqueryE, e) {
-            // get mouse pointer coordinates
-            self.secondWindowCoords = getMouseLocation(e);
-            var pageCoordinates = displayMode.windowToPage(
-              self.secondWindowCoords,
-              self.currentPage
-            );
-            self.URLData.width = pageCoordinates.x - self.URLData.x;
-            self.URLData.height = pageCoordinates.y - self.URLData.y;
+          annotManager.on("annotationChanged", function(e, annots) {
+            console.log("annotationChanged : ", annots);
+            (self.URLData.pageIndex = annots[0].getPageNumber()),
+              (self.URLData.x = annots[0].X),
+              (self.URLData.y = annots[0].Y),
+              (self.URLData.width = annots[0].Width),
+              (self.URLData.height = annots[0].Height);
           });
         }
       });
