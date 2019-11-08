@@ -35,7 +35,6 @@ export default {
   methods: {
     createUrl() {
       this.URLData.file = this.url;
-      // this.URLData.pageIndex = this.currentPage;
       store.dispatch("home/createUrl", this.URLData);
     }
   },
@@ -61,13 +60,16 @@ export default {
         if (self.isViewer) {
           // opening the web-viewer as viewer
           // jumping to the marked area
+          var doc = docViewer.getDocument();
           var zoomLevel = 1;
-          var pageWidth = 795;
+
+          var pageHeight = doc.getPageInfo(self.fileUrlData.pageIndex).height;
+          var pageGap = 5;
           // x and y offsets are continous increasing and considers document as one long page
           var xOffset = self.fileUrlData.x * zoomLevel;
           var yOffset =
             (self.fileUrlData.y +
-              pageWidth * (self.fileUrlData.pageIndex - 1)) *
+              (pageHeight + pageGap) * (self.fileUrlData.pageIndex - 1)) *
             zoomLevel;
           docViewer.zoomTo(zoomLevel, xOffset, yOffset);
           // the color to fill in the marked area

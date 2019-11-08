@@ -30,6 +30,7 @@ export default {
   transition: 0.3s;
   border: 1px solid green;
   padding: 4px;
+  margin: 3px;
 }
 
 /* On mouse-over, add a deeper shadow */

@@ -6,7 +6,7 @@
     <div id="app">
       <WebViewer
         :path="`${publicPath}lib`"
-        url="https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf"
+        url="http://localhost/assets/3772338819.pdf"
         :isViewer="this.isViewer"
       />
     </div>
